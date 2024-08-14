@@ -1,0 +1,77 @@
+onEvent("knapSoeg", "click", function() {
+    var elevId = -1;
+    var holdId = -1;
+
+    readRecords("Elever", {}, function(records) {
+        for (var i = 0; i < records.length; i++) {
+            if (getText("text_input1") === records[i].efternavn) {
+                elevId = records[i].id - 1;
+                holdId = records[i].holdId - 1;
+                break; // Exit loop once match is found
+            }
+        }
+
+        if (elevId >= 0 && holdId >= 0) {
+            setText("text_navn", records[elevId].fornavn + " " + records[elevId].efternavn);
+
+            readRecords("Hold", {}, function(holdRecords) {
+                if (holdId < holdRecords.length) {
+                    setText("text_lokale", holdRecords[holdId].lokaleId);
+                    setText("text_tid", holdRecords[holdId].start);
+                    setText("text_underviser", holdRecords[holdId].underviser);
+                } else {
+                    console.log("Invalid holdId: " + holdId);
+                    setText("text_lokale", "Invalid holdId");
+                    setText("text_tid", "");
+                    setText("text_underviser", "");
+                }
+            });
+        } else {
+            console.log("Elev not found or invalid holdId");
+            setText("text_navn", "Elev ikke fundet");
+            setText("text_lokale", "");
+            setText("text_tid", "");
+            setText("text_underviser", "");
+        }
+    });
+});
+
+onEvent("S", "click", function() {
+    console.log("S clicked!");
+    setScreen("screen1");
+});
+
+onEvent("button1", "click", function() {
+    console.log("button1 clicked!");
+    setScreen("screen3");
+});
+
+onEvent("button2", "click", function() {
+    console.log("button2 clicked!");
+    setScreen("screen2");
+});
+
+onEvent("button3", "click", function() {
+    console.log("button3 clicked!");
+    setScreen("screen2");
+});
+
+onEvent("button_Gem", "click", function() {
+    updateRecord("Hold", {id: 1, name: 'Bob'}, function(record, success) {
+        if (success) {
+            console.log("Record updated successfully!");
+        } else {
+            console.log("Failed to update record.");
+        }
+    });
+    console.log("button_Gem clicked!");
+});
+
+// Assuming createRecord should be executed somewhere on page load or another event
+createRecord("Hold", {name: 'Alice'}, function(record) {
+    if (record) {
+        console.log("Record created successfully!");
+    } else {
+        console.log("Failed to create record.");
+    }
+});
